@@ -16,7 +16,7 @@ let isUmbrella = fileManager.fileExists(atPath: "\(umbrellaPath)/Package.swift")
 let isNested = fileManager.fileExists(atPath: "\(nestedPath)/Package.swift")
 
 let package = Package(
-    name: "MHSwiftUI",
+    name: "swift-mh-swiftui",
     platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(name: "MHSwiftUI", targets: ["MHSwiftUI"]),
