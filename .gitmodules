@@ -1,0 +1,3 @@
+[submodule "swift-mh-foundation"]
+	path = swift-mh-foundation
+	url = https://github.com/malhal/swift-mh-foundation.git

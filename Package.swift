@@ -1,30 +1,38 @@
 // swift-tools-version: 5.9
+// swift-mh-swiftui/Package.swift
 import Foundation
 import PackageDescription
 
-// 1. Get the directory containing THIS Package.swift
-let currentDir = Context.packageDirectory
+// 1. Get the absolute path of this package
+let packageRoot = Context.packageDirectory
 
-// 2. Build the path to the expected neighbor (Foundation)
-// We go up one level from the SwiftUI folder to the Umbrella root
-let rootDir = URL(fileURLWithPath: currentDir).deletingLastPathComponent()
-let foundationPath = rootDir.appendingPathComponent("swift-mh-foundation")
+// 2. Define our two potential local paths
+let umbrellaPath = URL(fileURLWithPath: packageRoot).deletingLastPathComponent().appendingPathComponent("swift-mh-foundation").path
+let nestedPath = URL(fileURLWithPath: packageRoot).appendingPathComponent("swift-mh-foundation").path
 
-// 3. Check if the neighbor's Package.swift actually exists
-let isLocal = FileManager.default.fileExists(atPath: foundationPath.appendingPathComponent("Package.swift").path)
+// 3. Determine which dependency to use
+let fileManager = FileManager.default
+let isUmbrella = fileManager.fileExists(atPath: "\(umbrellaPath)/Package.swift")
+let isNested = fileManager.fileExists(atPath: "\(nestedPath)/Package.swift")
 
 let package = Package(
-    name: "swift-mh-swiftui",
+    name: "MHSwiftUI",
+    platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(name: "MHSwiftUI", targets: ["MHSwiftUI"]),
     ],
-    dependencies: isLocal ? [
-        // 1. If local folder exists, use it (No identity conflict)
-        .package(path: "../swift-mh-foundation")
-    ] : [
-        // 2. Otherwise, use the remote URL (Standalone mode)
-        .package(url: "https://github.com/malhal/swift-mh-foundation.git", branch: "main")
-    ],
+    dependencies: {
+        if isUmbrella {
+            // Priority 1: Sibling folder (Umbrella mode)
+            return [.package(path: "../swift-mh-foundation")]
+        } else if isNested {
+            // Priority 2: Subfolder (Standalone mode with submodule)
+            return [.package(path: "./swift-mh-foundation")]
+        } else {
+            // Priority 3: GitHub (Remote/Consumer mode)
+            return [.package(url: "https://github.com/malhal/swift-mh-foundation.git", branch: "main")]
+        }
+    }(),
     targets: [
         .target(
             name: "MHSwiftUI",
