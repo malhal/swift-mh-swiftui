@@ -6,10 +6,15 @@ let package = Package(
     products: [
         .library(name: "MHSwiftUI", targets: ["MHSwiftUI"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/malhal/swift-mh-foundation.git", branch: "main")
+    ],
     targets: [
         .target(
             name: "MHSwiftUI",
-            dependencies: []
+            dependencies: [
+                .product(name: "MHFoundation", package: "swift-mh-foundation")
+            ]
         )
     ]
 )
