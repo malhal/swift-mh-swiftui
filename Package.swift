@@ -2,7 +2,16 @@
 import Foundation
 import PackageDescription
 
-let isLocal = FileManager.default.fileExists(atPath: "../swift-mh-foundation")
+// 1. Get the directory containing THIS Package.swift
+let currentDir = Context.packageDirectory
+
+// 2. Build the path to the expected neighbor (Foundation)
+// We go up one level from the SwiftUI folder to the Umbrella root
+let rootDir = URL(fileURLWithPath: currentDir).deletingLastPathComponent()
+let foundationPath = rootDir.appendingPathComponent("swift-mh-foundation")
+
+// 3. Check if the neighbor's Package.swift actually exists
+let isLocal = FileManager.default.fileExists(atPath: foundationPath.appendingPathComponent("Package.swift").path)
 
 let package = Package(
     name: "swift-mh-swiftui",
