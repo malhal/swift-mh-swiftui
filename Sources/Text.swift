@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 
 extension Text {
-    enum MainMenu {
+    public enum MainMenu {
         private static let bundle = Bundle(identifier: "com.apple.SwiftUI")!
         private static let table = "MainMenu"
 
@@ -19,15 +19,20 @@ extension Text {
             ?? "App"
         }
 
+        public static var about: Text {
+            about(appName)
+        }
+        
+        
         /// Usage: Text.MainMenu.about() -> "About ActorStream"
         /// Usage: Text.MainMenu.about("Custom Name") -> "About Custom Name"
-        static func about(_ name: String = appName) -> Text {
+        public static func about(_ name: String) -> Text {
             // Using interpolation here ensures SwiftUI looks for the "About %@" key
             Text("About \(name)", tableName: table, bundle: bundle)
         }
         
         /// Simple static property for keys without arguments
-        static var edit: Text {
+        public static var edit: Text {
             Text("Edit", tableName: table, bundle: bundle)
         }
     }
